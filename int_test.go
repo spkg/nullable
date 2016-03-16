@@ -47,7 +47,7 @@ func TestInt(t *testing.T) {
 		},
 		{
 			ScanValue:     []byte("string value"),
-			ExpectedError: "converting driver.Value type",
+			ExpectedError: "invalid",
 			ExpectedValid: false,
 			ExpectedValue: 0,
 			JSONText:      `null`,

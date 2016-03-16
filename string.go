@@ -9,7 +9,8 @@ import (
 
 // String is a nullable string.
 // This type is almost identical to the standard library
-// sql.NullString class. It is in this package for completeness only.
+// sql.NullString class. The difference is that this type
+// implements the json.Marshaler and json.Unmarshaler interfaces.
 type String struct {
 	String string
 	Valid  bool

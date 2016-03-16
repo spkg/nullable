@@ -2,6 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/spkg/nullable?status.svg)](https://godoc.org/github.com/spkg/nullable)
 [![Build Status (Linux)](https://travis-ci.org/spkg/nullable.svg?branch=master)](https://travis-ci.org/spkg/nullable)
+[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/txfjx8i49ntan6fm?svg=true)](https://ci.appveyor.com/project/jjeffery/nullable)
 [![license](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/spkg/nullable/master/LICENSE.md)
 [![Coverage](http://gocover.io/_badge/github.com/spkg/nullable)](http://gocover.io/github.com/spkg/nullable)
 [![GoReportCard](http://goreportcard.com/badge/spkg/nullable)](http://goreportcard.com/report/spkg/nullable)

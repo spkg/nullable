@@ -16,6 +16,29 @@ type String struct {
 	Valid  bool
 }
 
+// Assign the value of the pointer. If the pointer is nil,
+// then then Valid is false, otherwise Valid is true.
+func (s *String) Assign(ptr *string) String {
+	if ptr == nil {
+		s.Valid = false
+		s.String = ""
+	} else {
+		s.Valid = true
+		s.String = *ptr
+	}
+	return *s
+}
+
+// Pointer returns a pointer to string. If Valid is false
+// then the pointer is nil, otherwise it is non-nil.
+func (s String) Pointer() *string {
+	if s.Valid {
+		v := s.String
+		return &v
+	}
+	return nil
+}
+
 // Scan implements the sql.Scanner interface.
 func (s *String) Scan(value interface{}) error {
 	var ns sql.NullString

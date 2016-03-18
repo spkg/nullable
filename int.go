@@ -13,6 +13,29 @@ type Int struct {
 	Valid bool
 }
 
+// Assign the value of the pointer. If the pointer is nil,
+// then then Valid is false, otherwise Valid is true.
+func (n *Int) Assign(ptr *int) Int {
+	if ptr == nil {
+		n.Valid = false
+		n.Int = 0
+	} else {
+		n.Valid = true
+		n.Int = *ptr
+	}
+	return *n
+}
+
+// Pointer returns a pointer to int. If Valid is false
+// then the pointer is nil, otherwise it is non-nil.
+func (n Int) Pointer() *int {
+	if n.Valid {
+		v := n.Int
+		return &v
+	}
+	return nil
+}
+
 // Scan implements the sql.Scanner interface.
 func (n *Int) Scan(value interface{}) error {
 	var ni sql.NullInt64

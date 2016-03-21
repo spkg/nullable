@@ -6,5 +6,6 @@ add additional data types.
 
 The types in this package also all implement the json.Marshaler and
 json.Unmarshaler interfaces, so they can be serialized to and from JSON.
+These types also have convience methods for converting to and from pointers.
 */
 package nullable

@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInt16(t *testing.T) {
+func TestFloat64(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
 		ExpectedError string
 		ExpectedValid bool
-		ExpectedValue int16
+		ExpectedValue float64
 		JSONText      string
 	}{
 		{
@@ -65,7 +65,7 @@ func TestInt16(t *testing.T) {
 	assert := assert.New(t)
 	for i, tc := range testCases {
 		tcName := fmt.Sprintf("test case %d", i)
-		var nv Int16
+		var nv Float64
 		err := nv.Scan(tc.ScanValue)
 		if tc.ExpectedError != "" {
 			assert.Error(err, tcName)
@@ -74,22 +74,22 @@ func TestInt16(t *testing.T) {
 		} else {
 			assert.NoError(err, tcName)
 			assert.Equal(tc.ExpectedValid, nv.Valid)
-			assert.Equal(tc.ExpectedValue, nv.Int16)
+			assert.Equal(tc.ExpectedValue, nv.Float64)
 		}
 		v, err := nv.Value()
 		assert.NoError(err)
 		if tc.ExpectedValid {
-			assert.Equal(driver.Value(int64(tc.ExpectedValue)), v)
+			assert.Equal(driver.Value(float64(tc.ExpectedValue)), v)
 		} else {
 			assert.Nil(v, fmt.Sprintf("test case %d", i))
 		}
 		jsonText, err := nv.MarshalJSON()
 		assert.NoError(err)
 		assert.Equal(tc.JSONText, string(jsonText), fmt.Sprintf("test case %d", i))
-		var nt2 Int16
+		var nt2 Float64
 		err = nt2.UnmarshalJSON(jsonText)
 		assert.NoError(err)
 		assert.Equal(nv.Valid, nt2.Valid)
-		assert.True(nv.Int16 == nt2.Int16)
+		assert.True(nv.Float64 == nt2.Float64)
 	}
 }

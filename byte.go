@@ -9,81 +9,81 @@ import (
 	"encoding/json"
 )
 
-// Int represents an int value that may be null.
+// Byte represents a byte value that may be null.
 // This type implements the Scanner interface so it
 // can be used as a scan destination, similar to NullString.
 // It also implements the necessary interfaces to serialize
 // to and from JSON.
-type Int struct {
-	Int   int
+type Byte struct {
+	Byte  byte
 	Valid bool
 }
 
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
-func (n *Int) Assign(ptr *int) Int {
+func (n *Byte) Assign(ptr *byte) Byte {
 	if ptr == nil {
 		n.Valid = false
-		n.Int = 0
+		n.Byte = 0
 	} else {
 		n.Valid = true
-		n.Int = *ptr
+		n.Byte = *ptr
 	}
 	return *n
 }
 
-// Pointer returns a pointer to int. If Valid is false
+// Pointer returns a pointer to byte. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Int) Pointer() *int {
+func (n Byte) Pointer() *byte {
 	if n.Valid {
-		v := n.Int
+		v := n.Byte
 		return &v
 	}
 	return nil
 }
 
 // Scan implements the sql.Scanner interface.
-func (n *Int) Scan(value interface{}) error {
+func (n *Byte) Scan(value interface{}) error {
 	var nt sql.NullInt64
 	err := nt.Scan(value)
 	if err != nil {
 		return err
 	}
 	n.Valid = nt.Valid
-	n.Int = int(nt.Int64)
+	n.Byte = byte(nt.Int64)
 	return nil
 }
 
 // Value implements the driver.Valuer interface.
-func (n Int) Value() (driver.Value, error) {
+func (n Byte) Value() (driver.Value, error) {
 	if !n.Valid {
 		return nil, nil
 	}
-	return int64(n.Int), nil
+	return int64(n.Byte), nil
 }
 
 // MarshalJSON implements the json.Marshaler interface.
-func (n Int) MarshalJSON() ([]byte, error) {
+func (n Byte) MarshalJSON() ([]byte, error) {
 	if n.Valid {
-		return json.Marshal(n.Int)
+		return json.Marshal(n.Byte)
 	}
 	return []byte("null"), nil
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
-func (n *Int) UnmarshalJSON(p []byte) error {
+func (n *Byte) UnmarshalJSON(p []byte) error {
 	if bytes.Equal(p, []byte("null")) {
-		n.Int = 0
+		n.Byte = 0
 		n.Valid = false
 		return nil
 	}
 
-	var v int
+	var v byte
 	if err := json.Unmarshal(p, &v); err != nil {
 		return err
 	}
 
-	n.Int = v
+	n.Byte = v
 	n.Valid = true
 	return nil
 }

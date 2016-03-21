@@ -8,15 +8,13 @@
 [![GoReportCard](http://goreportcard.com/badge/spkg/nullable)](http://goreportcard.com/report/spkg/nullable)
 
 The `nullable` package provides a number of types that represent values
-that may be null. The standard Go library already includes the following
-types in the `database/sql` package for this purpose:
-
-* `NullBool`
-* `NullFloat64`
-* `NullInt64`
-* `NullString`
+that may be null. The standard Go library already includes types in the
+`database/sql` package for this purpose including `NullBool`,
+`NullFloat64`, `NullInt64` and `NullString`.
 
 The types in this package add to this list for convenience. The other
 significant difference is that the types in this package all implement
 the `json.Marshaler` and `json.Unmarshaler` interfaces, which is
-used for serializing to and from JSON.
+used for serializing to and from JSON. They also implement `Assign` and
+`Pointer` methods, which are convenient for converting to and from pointer
+types.

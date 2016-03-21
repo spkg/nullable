@@ -1,5 +1,7 @@
 package nullable
 
+//go:generate nullable-generate
+
 import "errors"
 
 var (

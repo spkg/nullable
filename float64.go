@@ -9,81 +9,81 @@ import (
 	"encoding/json"
 )
 
-// Int represents an int value that may be null.
+// Float64 represents a float64 value that may be null.
 // This type implements the Scanner interface so it
 // can be used as a scan destination, similar to NullString.
 // It also implements the necessary interfaces to serialize
 // to and from JSON.
-type Int struct {
-	Int   int
-	Valid bool
+type Float64 struct {
+	Float64 float64
+	Valid   bool
 }
 
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
-func (n *Int) Assign(ptr *int) Int {
+func (n *Float64) Assign(ptr *float64) Float64 {
 	if ptr == nil {
 		n.Valid = false
-		n.Int = 0
+		n.Float64 = 0
 	} else {
 		n.Valid = true
-		n.Int = *ptr
+		n.Float64 = *ptr
 	}
 	return *n
 }
 
-// Pointer returns a pointer to int. If Valid is false
+// Pointer returns a pointer to float64. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Int) Pointer() *int {
+func (n Float64) Pointer() *float64 {
 	if n.Valid {
-		v := n.Int
+		v := n.Float64
 		return &v
 	}
 	return nil
 }
 
 // Scan implements the sql.Scanner interface.
-func (n *Int) Scan(value interface{}) error {
-	var nt sql.NullInt64
+func (n *Float64) Scan(value interface{}) error {
+	var nt sql.NullFloat64
 	err := nt.Scan(value)
 	if err != nil {
 		return err
 	}
 	n.Valid = nt.Valid
-	n.Int = int(nt.Int64)
+	n.Float64 = float64(nt.Float64)
 	return nil
 }
 
 // Value implements the driver.Valuer interface.
-func (n Int) Value() (driver.Value, error) {
+func (n Float64) Value() (driver.Value, error) {
 	if !n.Valid {
 		return nil, nil
 	}
-	return int64(n.Int), nil
+	return float64(n.Float64), nil
 }
 
 // MarshalJSON implements the json.Marshaler interface.
-func (n Int) MarshalJSON() ([]byte, error) {
+func (n Float64) MarshalJSON() ([]byte, error) {
 	if n.Valid {
-		return json.Marshal(n.Int)
+		return json.Marshal(n.Float64)
 	}
 	return []byte("null"), nil
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
-func (n *Int) UnmarshalJSON(p []byte) error {
+func (n *Float64) UnmarshalJSON(p []byte) error {
 	if bytes.Equal(p, []byte("null")) {
-		n.Int = 0
+		n.Float64 = 0
 		n.Valid = false
 		return nil
 	}
 
-	var v int
+	var v float64
 	if err := json.Unmarshal(p, &v); err != nil {
 		return err
 	}
 
-	n.Int = v
+	n.Float64 = v
 	n.Valid = true
 	return nil
 }

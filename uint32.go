@@ -19,6 +19,12 @@ type Uint32 struct {
 	Valid  bool
 }
 
+// Uint32FromPtr returns a Uint32 whose value matches ptr.
+func Uint32FromPtr(ptr *uint32) Uint32 {
+	var v Uint32
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Uint32) Assign(ptr *uint32) Uint32 {
@@ -32,9 +38,9 @@ func (n *Uint32) Assign(ptr *uint32) Uint32 {
 	return *n
 }
 
-// Pointer returns a pointer to uint32. If Valid is false
+// Ptr returns a pointer to uint32. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Uint32) Pointer() *uint32 {
+func (n Uint32) Ptr() *uint32 {
 	if n.Valid {
 		v := n.Uint32
 		return &v

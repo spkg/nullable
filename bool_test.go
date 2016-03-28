@@ -11,61 +11,47 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFloat32(t *testing.T) {
+func TestBool(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
 		ExpectedError string
 		ExpectedValid bool
-		ExpectedValue float32
+		ExpectedValue bool
 		JSONText      string
 	}{
 		{
-			ScanValue:     int64(11),
+			ScanValue:     true,
 			ExpectedError: "",
 			ExpectedValid: true,
-			ExpectedValue: 11,
-			JSONText:      `11`,
+			ExpectedValue: true,
+			JSONText:      `true`,
 		},
 		{
-			ScanValue:     uint64(12),
+			ScanValue:     false,
 			ExpectedError: "",
 			ExpectedValid: true,
-			ExpectedValue: 12,
-			JSONText:      `12`,
+			ExpectedValue: false,
+			JSONText:      `false`,
 		},
 		{
-			ScanValue:     int32(13),
-			ExpectedError: "",
-			ExpectedValid: true,
-			ExpectedValue: 13,
-			JSONText:      `13`,
-		},
-		{
-			ScanValue:     uint32(14),
-			ExpectedError: "",
-			ExpectedValid: true,
-			ExpectedValue: 14,
-			JSONText:      `14`,
-		},
-		{
-			ScanValue:     []byte("string value"),
-			ExpectedError: "invalid syntax",
+			ScanValue:     []byte("bytes"),
+			ExpectedError: "sql/driver",
 			ExpectedValid: false,
-			ExpectedValue: 0,
+			ExpectedValue: false,
 			JSONText:      `null`,
 		},
 		{
 			ScanValue:     nil,
 			ExpectedError: "",
 			ExpectedValid: false,
-			ExpectedValue: 0,
+			ExpectedValue: false,
 			JSONText:      "null",
 		},
 	}
 	assert := assert.New(t)
 	for i, tc := range testCases {
 		tcName := fmt.Sprintf("test case %d", i)
-		var nv Float32
+		var nv Bool
 		err := nv.Scan(tc.ScanValue)
 		if tc.ExpectedError != "" {
 			assert.Error(err, tcName)
@@ -74,26 +60,26 @@ func TestFloat32(t *testing.T) {
 		} else {
 			assert.NoError(err, tcName)
 			assert.Equal(tc.ExpectedValid, nv.Valid, tcName)
-			assert.Equal(tc.ExpectedValue, nv.Float32, tcName)
+			assert.Equal(tc.ExpectedValue, nv.Bool, tcName)
 		}
 		v, err := nv.Value()
 		assert.NoError(err)
 		if tc.ExpectedValid {
-			assert.Equal(driver.Value(float64(tc.ExpectedValue)), v, tcName)
+			assert.Equal(driver.Value(bool(tc.ExpectedValue)), v, tcName)
 			assert.NotNil(nv.Ptr(), tcName)
-			assert.Equal(nv.Float32, *(nv.Ptr()), tcName)
-			nv2 := Float32FromPtr(nv.Ptr())
+			assert.Equal(nv.Bool, *(nv.Ptr()), tcName)
+			nv2 := BoolFromPtr(nv.Ptr())
 			assert.Equal(nv, nv2, tcName)
 		} else {
 			assert.Nil(v, tcName)
 			assert.Nil(nv.Ptr(), tcName)
-			nv2 := Float32FromPtr(nv.Ptr())
+			nv2 := BoolFromPtr(nv.Ptr())
 			assert.Equal(nv, nv2, tcName)
 		}
 		jsonText, err := nv.MarshalJSON()
 		assert.NoError(err)
 		assert.Equal(tc.JSONText, string(jsonText), tcName)
-		var nt2 Float32
+		var nt2 Bool
 		err = nt2.UnmarshalJSON(jsonText)
 		assert.NoError(err)
 		assert.Equal(nv.Valid, nt2.Valid, tcName)

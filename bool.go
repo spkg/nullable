@@ -9,87 +9,87 @@ import (
 	"encoding/json"
 )
 
-// Uint16 represents a uint16 value that may be null.
+// Bool represents a bool value that may be null.
 // This type implements the Scanner interface so it
 // can be used as a scan destination, similar to NullString.
 // It also implements the necessary interfaces to serialize
 // to and from JSON.
-type Uint16 struct {
-	Uint16 uint16
-	Valid  bool
+type Bool struct {
+	Bool  bool
+	Valid bool
 }
 
-// Uint16FromPtr returns a Uint16 whose value matches ptr.
-func Uint16FromPtr(ptr *uint16) Uint16 {
-	var v Uint16
+// BoolFromPtr returns a Bool whose value matches ptr.
+func BoolFromPtr(ptr *bool) Bool {
+	var v Bool
 	return v.Assign(ptr)
 }
 
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
-func (n *Uint16) Assign(ptr *uint16) Uint16 {
+func (b *Bool) Assign(ptr *bool) Bool {
 	if ptr == nil {
-		n.Valid = false
-		n.Uint16 = 0
+		b.Valid = false
+		b.Bool = false
 	} else {
-		n.Valid = true
-		n.Uint16 = *ptr
+		b.Valid = true
+		b.Bool = *ptr
 	}
-	return *n
+	return *b
 }
 
-// Ptr returns a pointer to uint16. If Valid is false
+// Ptr returns a pointer to bool. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Uint16) Ptr() *uint16 {
-	if n.Valid {
-		v := n.Uint16
+func (b Bool) Ptr() *bool {
+	if b.Valid {
+		v := b.Bool
 		return &v
 	}
 	return nil
 }
 
 // Scan implements the sql.Scanner interface.
-func (n *Uint16) Scan(value interface{}) error {
-	var nt sql.NullInt64
+func (b *Bool) Scan(value interface{}) error {
+	var nt sql.NullBool
 	err := nt.Scan(value)
 	if err != nil {
 		return err
 	}
-	n.Valid = nt.Valid
-	n.Uint16 = uint16(nt.Int64)
+	b.Valid = nt.Valid
+	b.Bool = bool(nt.Bool)
 	return nil
 }
 
 // Value implements the driver.Valuer interface.
-func (n Uint16) Value() (driver.Value, error) {
-	if !n.Valid {
+func (b Bool) Value() (driver.Value, error) {
+	if !b.Valid {
 		return nil, nil
 	}
-	return int64(n.Uint16), nil
+	return bool(b.Bool), nil
 }
 
 // MarshalJSON implements the json.Marshaler interface.
-func (n Uint16) MarshalJSON() ([]byte, error) {
-	if n.Valid {
-		return json.Marshal(n.Uint16)
+func (b Bool) MarshalJSON() ([]byte, error) {
+	if b.Valid {
+		return json.Marshal(b.Bool)
 	}
 	return []byte("null"), nil
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
-func (n *Uint16) UnmarshalJSON(p []byte) error {
+func (b *Bool) UnmarshalJSON(p []byte) error {
 	if bytes.Equal(p, []byte("null")) {
-		n.Uint16 = 0
-		n.Valid = false
+		b.Bool = false
+		b.Valid = false
 		return nil
 	}
 
-	var v uint16
+	var v bool
 	if err := json.Unmarshal(p, &v); err != nil {
 		return err
 	}
 
-	n.Uint16 = v
-	n.Valid = true
+	b.Bool = v
+	b.Valid = true
 	return nil
 }

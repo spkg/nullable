@@ -19,6 +19,12 @@ type Uint64 struct {
 	Valid  bool
 }
 
+// Uint64FromPtr returns a Uint64 whose value matches ptr.
+func Uint64FromPtr(ptr *uint64) Uint64 {
+	var v Uint64
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Uint64) Assign(ptr *uint64) Uint64 {
@@ -32,9 +38,9 @@ func (n *Uint64) Assign(ptr *uint64) Uint64 {
 	return *n
 }
 
-// Pointer returns a pointer to uint64. If Valid is false
+// Ptr returns a pointer to uint64. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Uint64) Pointer() *uint64 {
+func (n Uint64) Ptr() *uint64 {
 	if n.Valid {
 		v := n.Uint64
 		return &v

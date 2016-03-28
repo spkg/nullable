@@ -19,6 +19,12 @@ type Uint struct {
 	Valid bool
 }
 
+// UintFromPtr returns a Uint whose value matches ptr.
+func UintFromPtr(ptr *uint) Uint {
+	var v Uint
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Uint) Assign(ptr *uint) Uint {
@@ -32,9 +38,9 @@ func (n *Uint) Assign(ptr *uint) Uint {
 	return *n
 }
 
-// Pointer returns a pointer to uint. If Valid is false
+// Ptr returns a pointer to uint. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Uint) Pointer() *uint {
+func (n Uint) Ptr() *uint {
 	if n.Valid {
 		v := n.Uint
 		return &v

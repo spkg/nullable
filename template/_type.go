@@ -4,9 +4,16 @@ package nullable
 
 import (
 	"bytes"
+	{{if not .NoScan -}}
 	"database/sql"
+	{{- end}}
+	{{if not .NoValue -}}
 	"database/sql/driver"
+	{{- end}}
 	"encoding/json"
+	{{range .Imports -}}
+	"{{.}}"
+	{{- end}}
 )
 
 // {{.Type}} represents {{.Indefinite}} {{.NativeType}} value that may be null.
@@ -17,6 +24,12 @@ import (
 type {{.Type}} struct {
 	{{.Type}} {{.NativeType}}
 	Valid bool
+}
+
+// {{.Type}}FromPtr returns a {{.Type}} whose value matches ptr.
+func {{.Type}}FromPtr(ptr *{{.NativeType}}) {{.Type}} {
+	var v {{.Type}}
+	return v.Assign(ptr)
 }
 
 // Assign the value of the pointer. If the pointer is nil,
@@ -32,9 +45,9 @@ func ({{.Var}} *{{.Type}}) Assign(ptr *{{.NativeType}}) {{.Type}} {
 	return *{{.Var}}
 }
 
-// Pointer returns a pointer to {{.NativeType}}. If Valid is false
+// Ptr returns a pointer to {{.NativeType}}. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func ({{.Var}} {{.Type}}) Pointer() *{{.NativeType}} {
+func ({{.Var}} {{.Type}}) Ptr() *{{.NativeType}} {
 	if {{.Var}}.Valid {
 		v := {{.Var}}.{{.Type}}
 		return &v
@@ -42,6 +55,7 @@ func ({{.Var}} {{.Type}}) Pointer() *{{.NativeType}} {
 	return nil
 }
 
+{{if not .NoScan -}}
 // Scan implements the sql.Scanner interface.
 func ({{.Var}} *{{.Type}}) Scan(value interface{}) error {
 	var nt sql.{{.NullType}}
@@ -53,7 +67,9 @@ func ({{.Var}} *{{.Type}}) Scan(value interface{}) error {
 	{{.Var}}.{{.Type}} = {{.NativeType}}(nt.{{.NullTypeField}})
 	return nil
 }
+{{- end }}
 
+{{if not .NoValue -}}
 // Value implements the driver.Valuer interface.
 func ({{.Var}} {{.Type}}) Value() (driver.Value, error) {
 	if !{{.Var}}.Valid {
@@ -61,6 +77,7 @@ func ({{.Var}} {{.Type}}) Value() (driver.Value, error) {
 	}
 	return {{.NullTypeVal}}({{.Var}}.{{.Type}}), nil
 }
+{{- end}}
 
 // MarshalJSON implements the json.Marshaler interface.
 func ({{.Var}} {{.Type}}) MarshalJSON() ([]byte, error) {

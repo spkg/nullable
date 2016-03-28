@@ -73,23 +73,32 @@ func TestByte(t *testing.T) {
 			continue
 		} else {
 			assert.NoError(err, tcName)
-			assert.Equal(tc.ExpectedValid, nv.Valid)
-			assert.Equal(tc.ExpectedValue, nv.Byte)
+			assert.Equal(tc.ExpectedValid, nv.Valid, tcName)
+			assert.Equal(tc.ExpectedValue, nv.Byte, tcName)
 		}
 		v, err := nv.Value()
 		assert.NoError(err)
 		if tc.ExpectedValid {
-			assert.Equal(driver.Value(int64(tc.ExpectedValue)), v)
+			assert.Equal(driver.Value(int64(tc.ExpectedValue)), v, tcName)
+			assert.NotNil(nv.Ptr(), tcName)
+			assert.Equal(nv.Byte, *(nv.Ptr()), tcName)
+			nv2 := ByteFromPtr(nv.Ptr())
+			assert.Equal(nv, nv2, tcName)
 		} else {
-			assert.Nil(v, fmt.Sprintf("test case %d", i))
+			assert.Nil(v, tcName)
+			assert.Nil(nv.Ptr(), tcName)
+			nv2 := ByteFromPtr(nv.Ptr())
+			assert.Equal(nv, nv2, tcName)
 		}
 		jsonText, err := nv.MarshalJSON()
 		assert.NoError(err)
-		assert.Equal(tc.JSONText, string(jsonText), fmt.Sprintf("test case %d", i))
+		assert.Equal(tc.JSONText, string(jsonText), tcName)
 		var nt2 Byte
 		err = nt2.UnmarshalJSON(jsonText)
 		assert.NoError(err)
-		assert.Equal(nv.Valid, nt2.Valid)
-		assert.True(nv.Byte == nt2.Byte)
+		assert.Equal(nv.Valid, nt2.Valid, tcName)
+		// invalid JSON for any type
+		err = nt2.UnmarshalJSON([]byte("00 this is not valid xx"))
+		assert.Error(err)
 	}
 }

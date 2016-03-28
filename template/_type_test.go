@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	{{range .Imports -}}
+	"{{.}}"
+	{{- end}}
 
 	"github.com/stretchr/testify/assert"
 )
@@ -19,6 +22,94 @@ func Test{{.Type}}(t *testing.T) {
 		ExpectedValue {{.NativeType}}
 		JSONText      string
 	}{
+	{{- if eq .NativeType "string"}}
+		{
+			ScanValue:     "string-val",
+			ExpectedError: "",
+			ExpectedValid: true,
+			ExpectedValue: "string-val",
+			JSONText:      `"string-val"`,
+		},
+		{
+			ScanValue:     []byte("bytes"),
+			ExpectedError: "",
+			ExpectedValid: true,
+			ExpectedValue: "bytes",
+			JSONText:      `"bytes"`,
+		},
+		{
+			ScanValue:     nil,
+			ExpectedError: "",
+			ExpectedValid: false,
+			ExpectedValue: "",
+			JSONText:      "null",
+		},
+		{
+			ScanValue:     int64(99),
+			ExpectedError: "",
+			ExpectedValid: true,
+			ExpectedValue: "99",
+			JSONText:      "\"99\"",
+		},
+		{
+			ScanValue:     false,
+			ExpectedError: "",
+			ExpectedValid: true,
+			ExpectedValue: "false",
+			JSONText:      "\"false\"",
+		},
+		{{- else if eq .NativeType "bool"}}
+			{
+				ScanValue:     true,
+				ExpectedError: "",
+				ExpectedValid: true,
+				ExpectedValue: true,
+				JSONText:      `true`,
+			},
+			{
+				ScanValue:     false,
+				ExpectedError: "",
+				ExpectedValid: true,
+				ExpectedValue: false,
+				JSONText:      `false`,
+			},
+			{
+				ScanValue:     []byte("bytes"),
+				ExpectedError: "sql/driver",
+				ExpectedValid: false,
+				ExpectedValue: false,
+				JSONText:      `null`,
+			},
+			{
+				ScanValue:     nil,
+				ExpectedError: "",
+				ExpectedValid: false,
+				ExpectedValue: false,
+				JSONText:      "null",
+			},
+		{{- else if eq .NativeType "time.Time"}}
+			{
+				ScanValue:     time.Date(2001, 11, 10, 15, 04, 05, 0, time.FixedZone("AEST", 10*3600)),
+				ExpectedError: "",
+				ExpectedValid: true,
+				ExpectedValue: time.Date(2001, 11, 10, 15, 04, 05, 0, time.FixedZone("AEST", 10*3600)),
+				JSONText:      `"2001-11-10T15:04:05+10:00"`,
+			},
+			{
+				ScanValue:     53.5,
+				ExpectedError: "cannot convert float64 to time",
+				ExpectedValid: false,
+				ExpectedValue: time.Time{},
+				JSONText:      `null`,
+			},
+			{
+				ScanValue:     nil,
+				ExpectedError: "",
+				ExpectedValid: false,
+				ExpectedValue: time.Time{},
+				JSONText:      "null",
+			},
+	{{else}}
 		{
 			ScanValue:     int64(11),
 			ExpectedError: "",
@@ -61,6 +152,7 @@ func Test{{.Type}}(t *testing.T) {
 			ExpectedValue: 0,
 			JSONText:      "null",
 		},
+		{{end}}
 	}
 	assert := assert.New(t)
 	for i, tc := range testCases {
@@ -73,23 +165,32 @@ func Test{{.Type}}(t *testing.T) {
 			continue
 		} else {
 			assert.NoError(err, tcName)
-			assert.Equal(tc.ExpectedValid, nv.Valid)
-			assert.Equal(tc.ExpectedValue, nv.{{.Type}})
+			assert.Equal(tc.ExpectedValid, nv.Valid, tcName)
+			assert.Equal(tc.ExpectedValue, nv.{{.Type}}, tcName)
 		}
 		v, err := nv.Value()
 		assert.NoError(err)
 		if tc.ExpectedValid {
-			assert.Equal(driver.Value({{.NullTypeVal}}(tc.ExpectedValue)), v)
+			assert.Equal(driver.Value({{.NullTypeVal}}(tc.ExpectedValue)), v, tcName)
+			assert.NotNil(nv.Ptr(), tcName)
+			assert.Equal(nv.{{.Type}}, *(nv.Ptr()), tcName)
+			nv2 := {{.Type}}FromPtr(nv.Ptr())
+			assert.Equal(nv, nv2, tcName)
 		} else {
-			assert.Nil(v, fmt.Sprintf("test case %d", i))
+			assert.Nil(v, tcName)
+			assert.Nil(nv.Ptr(), tcName)
+			nv2 := {{.Type}}FromPtr(nv.Ptr())
+			assert.Equal(nv, nv2, tcName)
 		}
 		jsonText, err := nv.MarshalJSON()
 		assert.NoError(err)
-		assert.Equal(tc.JSONText, string(jsonText), fmt.Sprintf("test case %d", i))
+		assert.Equal(tc.JSONText, string(jsonText), tcName)
 		var nt2 {{.Type}}
 		err = nt2.UnmarshalJSON(jsonText)
 		assert.NoError(err)
-		assert.Equal(nv.Valid, nt2.Valid)
-		assert.True(nv.{{.Type}} == nt2.{{.Type}})
+		assert.Equal(nv.Valid, nt2.Valid, tcName)
+		// invalid JSON for any type
+		err = nt2.UnmarshalJSON([]byte("00 this is not valid xx"))
+		assert.Error(err)
 	}
 }

@@ -19,6 +19,12 @@ type Int8 struct {
 	Valid bool
 }
 
+// Int8FromPtr returns a Int8 whose value matches ptr.
+func Int8FromPtr(ptr *int8) Int8 {
+	var v Int8
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Int8) Assign(ptr *int8) Int8 {
@@ -32,9 +38,9 @@ func (n *Int8) Assign(ptr *int8) Int8 {
 	return *n
 }
 
-// Pointer returns a pointer to int8. If Valid is false
+// Ptr returns a pointer to int8. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Int8) Pointer() *int8 {
+func (n Int8) Ptr() *int8 {
 	if n.Valid {
 		v := n.Int8
 		return &v

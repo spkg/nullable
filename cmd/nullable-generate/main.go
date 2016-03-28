@@ -60,7 +60,42 @@ var params = []struct {
 	NullTypeVal   string
 	ZeroVal       string
 	Var           string
+	Imports       []string
+	NoScan        bool
+	NoValue       bool
 }{
+	{
+		Type:          "String",
+		NativeType:    "string",
+		Indefinite:    "a",
+		NullType:      "NullString",
+		NullTypeField: "String",
+		NullTypeVal:   "string",
+		ZeroVal:       "\"\"",
+		Var:           "s",
+	},
+	{
+		Type:          "Bool",
+		NativeType:    "bool",
+		Indefinite:    "a",
+		NullType:      "NullBool",
+		NullTypeField: "Bool",
+		NullTypeVal:   "bool",
+		ZeroVal:       "false",
+		Var:           "b",
+	},
+	{
+		Type:          "Time",
+		NativeType:    "time.Time",
+		Indefinite:    "a",
+		NullType:      "-",
+		NullTypeField: "-",
+		NullTypeVal:   "",
+		ZeroVal:       "time.Time{}",
+		Var:           "tm",
+		NoScan:        true,
+		Imports:       []string{"time"},
+	},
 	{
 		Type:          "Float64",
 		NativeType:    "float64",

@@ -73,23 +73,32 @@ func TestInt16(t *testing.T) {
 			continue
 		} else {
 			assert.NoError(err, tcName)
-			assert.Equal(tc.ExpectedValid, nv.Valid)
-			assert.Equal(tc.ExpectedValue, nv.Int16)
+			assert.Equal(tc.ExpectedValid, nv.Valid, tcName)
+			assert.Equal(tc.ExpectedValue, nv.Int16, tcName)
 		}
 		v, err := nv.Value()
 		assert.NoError(err)
 		if tc.ExpectedValid {
-			assert.Equal(driver.Value(int64(tc.ExpectedValue)), v)
+			assert.Equal(driver.Value(int64(tc.ExpectedValue)), v, tcName)
+			assert.NotNil(nv.Ptr(), tcName)
+			assert.Equal(nv.Int16, *(nv.Ptr()), tcName)
+			nv2 := Int16FromPtr(nv.Ptr())
+			assert.Equal(nv, nv2, tcName)
 		} else {
-			assert.Nil(v, fmt.Sprintf("test case %d", i))
+			assert.Nil(v, tcName)
+			assert.Nil(nv.Ptr(), tcName)
+			nv2 := Int16FromPtr(nv.Ptr())
+			assert.Equal(nv, nv2, tcName)
 		}
 		jsonText, err := nv.MarshalJSON()
 		assert.NoError(err)
-		assert.Equal(tc.JSONText, string(jsonText), fmt.Sprintf("test case %d", i))
+		assert.Equal(tc.JSONText, string(jsonText), tcName)
 		var nt2 Int16
 		err = nt2.UnmarshalJSON(jsonText)
 		assert.NoError(err)
-		assert.Equal(nv.Valid, nt2.Valid)
-		assert.True(nv.Int16 == nt2.Int16)
+		assert.Equal(nv.Valid, nt2.Valid, tcName)
+		// invalid JSON for any type
+		err = nt2.UnmarshalJSON([]byte("00 this is not valid xx"))
+		assert.Error(err)
 	}
 }

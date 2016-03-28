@@ -19,6 +19,12 @@ type Float32 struct {
 	Valid   bool
 }
 
+// Float32FromPtr returns a Float32 whose value matches ptr.
+func Float32FromPtr(ptr *float32) Float32 {
+	var v Float32
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Float32) Assign(ptr *float32) Float32 {
@@ -32,9 +38,9 @@ func (n *Float32) Assign(ptr *float32) Float32 {
 	return *n
 }
 
-// Pointer returns a pointer to float32. If Valid is false
+// Ptr returns a pointer to float32. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Float32) Pointer() *float32 {
+func (n Float32) Ptr() *float32 {
 	if n.Valid {
 		v := n.Float32
 		return &v

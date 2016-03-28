@@ -19,6 +19,12 @@ type Int struct {
 	Valid bool
 }
 
+// IntFromPtr returns a Int whose value matches ptr.
+func IntFromPtr(ptr *int) Int {
+	var v Int
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Int) Assign(ptr *int) Int {
@@ -32,9 +38,9 @@ func (n *Int) Assign(ptr *int) Int {
 	return *n
 }
 
-// Pointer returns a pointer to int. If Valid is false
+// Ptr returns a pointer to int. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Int) Pointer() *int {
+func (n Int) Ptr() *int {
 	if n.Valid {
 		v := n.Int
 		return &v

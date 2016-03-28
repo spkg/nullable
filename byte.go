@@ -19,6 +19,12 @@ type Byte struct {
 	Valid bool
 }
 
+// ByteFromPtr returns a Byte whose value matches ptr.
+func ByteFromPtr(ptr *byte) Byte {
+	var v Byte
+	return v.Assign(ptr)
+}
+
 // Assign the value of the pointer. If the pointer is nil,
 // then then Valid is false, otherwise Valid is true.
 func (n *Byte) Assign(ptr *byte) Byte {
@@ -32,9 +38,9 @@ func (n *Byte) Assign(ptr *byte) Byte {
 	return *n
 }
 
-// Pointer returns a pointer to byte. If Valid is false
+// Ptr returns a pointer to byte. If Valid is false
 // then the pointer is nil, otherwise it is non-nil.
-func (n Byte) Pointer() *byte {
+func (n Byte) Ptr() *byte {
 	if n.Valid {
 		v := n.Byte
 		return &v

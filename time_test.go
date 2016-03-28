@@ -5,7 +5,6 @@ package nullable
 import (
 	"database/sql/driver"
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
@@ -15,28 +14,26 @@ import (
 func TestTime(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
-		ExpectedError string
+		ExpectedError bool
 		ExpectedValid bool
 		ExpectedValue time.Time
 		JSONText      string
 	}{
 		{
 			ScanValue:     time.Date(2001, 11, 10, 15, 04, 05, 0, time.FixedZone("AEST", 10*3600)),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: time.Date(2001, 11, 10, 15, 04, 05, 0, time.FixedZone("AEST", 10*3600)),
 			JSONText:      `"2001-11-10T15:04:05+10:00"`,
 		},
 		{
 			ScanValue:     53.5,
-			ExpectedError: "cannot convert float64 to time",
+			ExpectedError: true,
 			ExpectedValid: false,
 			ExpectedValue: time.Time{},
 			JSONText:      `null`,
 		},
 		{
 			ScanValue:     nil,
-			ExpectedError: "",
 			ExpectedValid: false,
 			ExpectedValue: time.Time{},
 			JSONText:      "null",
@@ -47,9 +44,8 @@ func TestTime(t *testing.T) {
 		tcName := fmt.Sprintf("test case %d", i)
 		var nv Time
 		err := nv.Scan(tc.ScanValue)
-		if tc.ExpectedError != "" {
+		if tc.ExpectedError {
 			assert.Error(err, tcName)
-			assert.True(strings.Contains(err.Error(), tc.ExpectedError), err.Error())
 			continue
 		} else {
 			assert.NoError(err, tcName)

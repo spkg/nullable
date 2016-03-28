@@ -5,7 +5,6 @@ package nullable
 import (
 	"database/sql/driver"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,49 +13,44 @@ import (
 func TestInt64(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
-		ExpectedError string
+		ExpectedError bool
 		ExpectedValid bool
 		ExpectedValue int64
 		JSONText      string
 	}{
 		{
 			ScanValue:     int64(11),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 11,
 			JSONText:      `11`,
 		},
 		{
 			ScanValue:     uint64(12),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 12,
 			JSONText:      `12`,
 		},
 		{
 			ScanValue:     int32(13),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 13,
 			JSONText:      `13`,
 		},
 		{
 			ScanValue:     uint32(14),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 14,
 			JSONText:      `14`,
 		},
 		{
 			ScanValue:     []byte("string value"),
-			ExpectedError: "invalid syntax",
+			ExpectedError: true,
 			ExpectedValid: false,
 			ExpectedValue: 0,
 			JSONText:      `null`,
 		},
 		{
 			ScanValue:     nil,
-			ExpectedError: "",
 			ExpectedValid: false,
 			ExpectedValue: 0,
 			JSONText:      "null",
@@ -67,9 +61,8 @@ func TestInt64(t *testing.T) {
 		tcName := fmt.Sprintf("test case %d", i)
 		var nv Int64
 		err := nv.Scan(tc.ScanValue)
-		if tc.ExpectedError != "" {
+		if tc.ExpectedError {
 			assert.Error(err, tcName)
-			assert.True(strings.Contains(err.Error(), tc.ExpectedError), err.Error())
 			continue
 		} else {
 			assert.NoError(err, tcName)

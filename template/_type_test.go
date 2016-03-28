@@ -5,7 +5,6 @@ package nullable
 import (
 	"database/sql/driver"
 	"fmt"
-	"strings"
 	"testing"
 	{{range .Imports -}}
 	"{{.}}"
@@ -17,7 +16,7 @@ import (
 func Test{{.Type}}(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
-		ExpectedError string
+		ExpectedError bool
 		ExpectedValid bool
 		ExpectedValue {{.NativeType}}
 		JSONText      string
@@ -25,42 +24,37 @@ func Test{{.Type}}(t *testing.T) {
 	{{- if eq .NativeType "string"}}
 		{
 			ScanValue:     "string-val",
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "string-val",
 			JSONText:      `"string-val"`,
 		},
 		{
 			ScanValue:     []byte("bytes"),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "bytes",
 			JSONText:      `"bytes"`,
 		},
 		{
 			ScanValue:     nil,
-			ExpectedError: "",
 			ExpectedValid: false,
 			ExpectedValue: "",
 			JSONText:      "null",
 		},
 		{
 			ScanValue:     int64(99),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "99",
 			JSONText:      "\"99\"",
 		},
 		{
 			ScanValue:     false,
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "false",
 			JSONText:      "\"false\"",
 		},
 		{
-			ScanValue:     strings.NewReplacer("xxx","yyy"),
-			ExpectedError: "unsupported Scan",
+			ScanValue:     fmt.Errorf("I am an error"),
+			ExpectedError: true,
 			ExpectedValid: false,
 			ExpectedValue: "",
 			JSONText:      "null",
@@ -68,28 +62,25 @@ func Test{{.Type}}(t *testing.T) {
 		{{- else if eq .NativeType "bool"}}
 			{
 				ScanValue:     true,
-				ExpectedError: "",
 				ExpectedValid: true,
 				ExpectedValue: true,
 				JSONText:      `true`,
 			},
 			{
 				ScanValue:     false,
-				ExpectedError: "",
 				ExpectedValid: true,
 				ExpectedValue: false,
 				JSONText:      `false`,
 			},
 			{
 				ScanValue:     []byte("bytes"),
-				ExpectedError: "sql/driver",
+				ExpectedError: true,
 				ExpectedValid: false,
 				ExpectedValue: false,
 				JSONText:      `null`,
 			},
 			{
 				ScanValue:     nil,
-				ExpectedError: "",
 				ExpectedValid: false,
 				ExpectedValue: false,
 				JSONText:      "null",
@@ -97,21 +88,19 @@ func Test{{.Type}}(t *testing.T) {
 		{{- else if eq .NativeType "time.Time"}}
 			{
 				ScanValue:     time.Date(2001, 11, 10, 15, 04, 05, 0, time.FixedZone("AEST", 10*3600)),
-				ExpectedError: "",
 				ExpectedValid: true,
 				ExpectedValue: time.Date(2001, 11, 10, 15, 04, 05, 0, time.FixedZone("AEST", 10*3600)),
 				JSONText:      `"2001-11-10T15:04:05+10:00"`,
 			},
 			{
 				ScanValue:     53.5,
-				ExpectedError: "cannot convert float64 to time",
+				ExpectedError: true,
 				ExpectedValid: false,
 				ExpectedValue: time.Time{},
 				JSONText:      `null`,
 			},
 			{
 				ScanValue:     nil,
-				ExpectedError: "",
 				ExpectedValid: false,
 				ExpectedValue: time.Time{},
 				JSONText:      "null",
@@ -119,42 +108,37 @@ func Test{{.Type}}(t *testing.T) {
 	{{else}}
 		{
 			ScanValue:     int64(11),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 11,
 			JSONText:      `11`,
 		},
 		{
 			ScanValue:     uint64(12),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 12,
 			JSONText:      `12`,
 		},
 		{
 			ScanValue:     int32(13),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 13,
 			JSONText:      `13`,
 		},
 		{
 			ScanValue:     uint32(14),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: 14,
 			JSONText:      `14`,
 		},
 		{
 			ScanValue:     []byte("string value"),
-			ExpectedError: "invalid syntax",
+			ExpectedError: true,
 			ExpectedValid: false,
 			ExpectedValue: 0,
 			JSONText:      `null`,
 		},
 		{
 			ScanValue:     nil,
-			ExpectedError: "",
 			ExpectedValid: false,
 			ExpectedValue: 0,
 			JSONText:      "null",
@@ -166,9 +150,8 @@ func Test{{.Type}}(t *testing.T) {
 		tcName := fmt.Sprintf("test case %d", i)
 		var nv {{.Type}}
 		err := nv.Scan(tc.ScanValue)
-		if tc.ExpectedError != "" {
+		if tc.ExpectedError {
 			assert.Error(err, tcName)
-			assert.True(strings.Contains(err.Error(), tc.ExpectedError), err.Error())
 			continue
 		} else {
 			assert.NoError(err, tcName)

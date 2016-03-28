@@ -5,7 +5,6 @@ package nullable
 import (
 	"database/sql/driver"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,35 +13,32 @@ import (
 func TestBool(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
-		ExpectedError string
+		ExpectedError bool
 		ExpectedValid bool
 		ExpectedValue bool
 		JSONText      string
 	}{
 		{
 			ScanValue:     true,
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: true,
 			JSONText:      `true`,
 		},
 		{
 			ScanValue:     false,
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: false,
 			JSONText:      `false`,
 		},
 		{
 			ScanValue:     []byte("bytes"),
-			ExpectedError: "sql/driver",
+			ExpectedError: true,
 			ExpectedValid: false,
 			ExpectedValue: false,
 			JSONText:      `null`,
 		},
 		{
 			ScanValue:     nil,
-			ExpectedError: "",
 			ExpectedValid: false,
 			ExpectedValue: false,
 			JSONText:      "null",
@@ -53,9 +49,8 @@ func TestBool(t *testing.T) {
 		tcName := fmt.Sprintf("test case %d", i)
 		var nv Bool
 		err := nv.Scan(tc.ScanValue)
-		if tc.ExpectedError != "" {
+		if tc.ExpectedError {
 			assert.Error(err, tcName)
-			assert.True(strings.Contains(err.Error(), tc.ExpectedError), err.Error())
 			continue
 		} else {
 			assert.NoError(err, tcName)

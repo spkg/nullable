@@ -5,7 +5,6 @@ package nullable
 import (
 	"database/sql/driver"
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,49 +13,44 @@ import (
 func TestString(t *testing.T) {
 	testCases := []struct {
 		ScanValue     interface{}
-		ExpectedError string
+		ExpectedError bool
 		ExpectedValid bool
 		ExpectedValue string
 		JSONText      string
 	}{
 		{
 			ScanValue:     "string-val",
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "string-val",
 			JSONText:      `"string-val"`,
 		},
 		{
 			ScanValue:     []byte("bytes"),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "bytes",
 			JSONText:      `"bytes"`,
 		},
 		{
 			ScanValue:     nil,
-			ExpectedError: "",
 			ExpectedValid: false,
 			ExpectedValue: "",
 			JSONText:      "null",
 		},
 		{
 			ScanValue:     int64(99),
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "99",
 			JSONText:      "\"99\"",
 		},
 		{
 			ScanValue:     false,
-			ExpectedError: "",
 			ExpectedValid: true,
 			ExpectedValue: "false",
 			JSONText:      "\"false\"",
 		},
 		{
-			ScanValue:     strings.NewReplacer("xxx", "yyy"),
-			ExpectedError: "unsupported Scan",
+			ScanValue:     fmt.Errorf("I am an error"),
+			ExpectedError: true,
 			ExpectedValid: false,
 			ExpectedValue: "",
 			JSONText:      "null",
@@ -67,9 +61,8 @@ func TestString(t *testing.T) {
 		tcName := fmt.Sprintf("test case %d", i)
 		var nv String
 		err := nv.Scan(tc.ScanValue)
-		if tc.ExpectedError != "" {
+		if tc.ExpectedError {
 			assert.Error(err, tcName)
-			assert.True(strings.Contains(err.Error(), tc.ExpectedError), err.Error())
 			continue
 		} else {
 			assert.NoError(err, tcName)

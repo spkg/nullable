@@ -54,6 +54,13 @@ func TestString(t *testing.T) {
 			ExpectedValue: "false",
 			JSONText:      "\"false\"",
 		},
+		{
+			ScanValue:     strings.NewReplacer("xxx", "yyy"),
+			ExpectedError: "unsupported Scan",
+			ExpectedValid: false,
+			ExpectedValue: "",
+			JSONText:      "null",
+		},
 	}
 	assert := assert.New(t)
 	for i, tc := range testCases {

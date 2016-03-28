@@ -58,6 +58,13 @@ func Test{{.Type}}(t *testing.T) {
 			ExpectedValue: "false",
 			JSONText:      "\"false\"",
 		},
+		{
+			ScanValue:     strings.NewReplacer("xxx","yyy"),
+			ExpectedError: "unsupported Scan",
+			ExpectedValid: false,
+			ExpectedValue: "",
+			JSONText:      "null",
+		},
 		{{- else if eq .NativeType "bool"}}
 			{
 				ScanValue:     true,

@@ -56,7 +56,8 @@ func (b *Bool) Scan(value interface{}) error {
 		return err
 	}
 	b.Valid = nt.Valid
-	b.Bool = bool(nt.Bool)
+	b.Bool = nt.Bool
+
 	return nil
 }
 

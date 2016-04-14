@@ -56,7 +56,8 @@ func (n *Int64) Scan(value interface{}) error {
 		return err
 	}
 	n.Valid = nt.Valid
-	n.Int64 = int64(nt.Int64)
+	n.Int64 = nt.Int64
+
 	return nil
 }
 

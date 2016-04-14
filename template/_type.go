@@ -64,7 +64,11 @@ func ({{.Var}} *{{.Type}}) Scan(value interface{}) error {
 		return err
 	}
 	{{.Var}}.Valid = nt.Valid
+    {{if .NoCast -}}
+	{{.Var}}.{{.Type}} = nt.{{.NullTypeField}}
+    {{else -}}
 	{{.Var}}.{{.Type}} = {{.NativeType}}(nt.{{.NullTypeField}})
+    {{- end}}
 	return nil
 }
 {{- end }}

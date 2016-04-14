@@ -63,6 +63,7 @@ var params = []struct {
 	Imports       []string
 	NoScan        bool
 	NoValue       bool
+	NoCast        bool
 }{
 	{
 		Type:          "String",
@@ -73,6 +74,7 @@ var params = []struct {
 		NullTypeVal:   "string",
 		ZeroVal:       "\"\"",
 		Var:           "s",
+		NoCast:        true,
 	},
 	{
 		Type:          "Bool",
@@ -83,6 +85,7 @@ var params = []struct {
 		NullTypeVal:   "bool",
 		ZeroVal:       "false",
 		Var:           "b",
+		NoCast:        true,
 	},
 	{
 		Type:          "Time",
@@ -105,6 +108,7 @@ var params = []struct {
 		NullTypeVal:   "float64",
 		ZeroVal:       "0",
 		Var:           "n",
+		NoCast:        true,
 	},
 	{
 		Type:          "Float32",
@@ -145,6 +149,7 @@ var params = []struct {
 		NullTypeVal:   "int64",
 		ZeroVal:       "0",
 		Var:           "n",
+		NoCast:        true,
 	},
 	{
 		Type:          "Uint64",

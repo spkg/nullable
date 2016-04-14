@@ -56,7 +56,8 @@ func (s *String) Scan(value interface{}) error {
 		return err
 	}
 	s.Valid = nt.Valid
-	s.String = string(nt.String)
+	s.String = nt.String
+
 	return nil
 }
 

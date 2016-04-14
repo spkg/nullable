@@ -79,7 +79,11 @@ func ({{.Var}} {{.Type}}) Value() (driver.Value, error) {
 	if !{{.Var}}.Valid {
 		return nil, nil
 	}
+    {{if .NoCast -}}
+	return {{.Var}}.{{.Type}}, nil
+    {{else -}}
 	return {{.NullTypeVal}}({{.Var}}.{{.Type}}), nil
+    {{- end}}
 }
 {{- end}}
 

@@ -54,7 +54,8 @@ func (tm Time) Value() (driver.Value, error) {
 	if !tm.Valid {
 		return nil, nil
 	}
-	return (tm.Time), nil
+	return tm.Time, nil
+
 }
 
 // MarshalJSON implements the json.Marshaler interface.

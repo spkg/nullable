@@ -97,6 +97,7 @@ var params = []struct {
 		ZeroVal:       "time.Time{}",
 		Var:           "tm",
 		NoScan:        true,
+		NoCast:        true,
 		Imports:       []string{"time"},
 	},
 	{

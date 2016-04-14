@@ -66,7 +66,8 @@ func (n Float64) Value() (driver.Value, error) {
 	if !n.Valid {
 		return nil, nil
 	}
-	return float64(n.Float64), nil
+	return n.Float64, nil
+
 }
 
 // MarshalJSON implements the json.Marshaler interface.

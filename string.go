@@ -66,7 +66,8 @@ func (s String) Value() (driver.Value, error) {
 	if !s.Valid {
 		return nil, nil
 	}
-	return string(s.String), nil
+	return s.String, nil
+
 }
 
 // MarshalJSON implements the json.Marshaler interface.

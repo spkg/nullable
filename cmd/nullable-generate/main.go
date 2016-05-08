@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"go/format"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,14 +34,24 @@ func main() {
 						fmt.Println(err)
 						os.Exit(1)
 					}
+					var outBuf bytes.Buffer
+					if err = tmpl.Execute(&outBuf, p); err != nil {
+						fmt.Println(fileName+":", err)
+						os.Exit(1)
+					}
 					outFileName := strings.Replace(fileName, "_type", strings.ToLower(p.Type), 1)
 					outFile, err := os.Create(outFileName)
 					if err != nil {
 						fmt.Println(err)
 						os.Exit(1)
 					}
-					if err := tmpl.Execute(outFile, p); err != nil {
-						fmt.Println(fileName+":", err)
+					outBytes, err := format.Source(outBuf.Bytes())
+					if err != nil {
+						fmt.Println(err)
+						os.Exit(1)
+					}
+					if _, err = outFile.Write(outBytes); err != nil {
+						fmt.Println(err)
 						os.Exit(1)
 					}
 					outFile.Close()

@@ -78,7 +78,7 @@ func (n Float32) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *Float32) UnmarshalJSON(p []byte) error {
-	if bytes.Equal(p, []byte("null")) {
+	if bytes.Equal(p, jsonNull) {
 		n.Float32 = 0
 		n.Valid = false
 		return nil

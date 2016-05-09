@@ -68,7 +68,7 @@ func (tm Time) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (tm *Time) UnmarshalJSON(p []byte) error {
-	if bytes.Equal(p, []byte("null")) {
+	if bytes.Equal(p, jsonNull) {
 		tm.Time = time.Time{}
 		tm.Valid = false
 		return nil

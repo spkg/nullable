@@ -78,7 +78,7 @@ func (n Uint64) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (n *Uint64) UnmarshalJSON(p []byte) error {
-	if bytes.Equal(p, []byte("null")) {
+	if bytes.Equal(p, jsonNull) {
 		n.Uint64 = 0
 		n.Valid = false
 		return nil

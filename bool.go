@@ -80,7 +80,7 @@ func (b Bool) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements the json.Unmarshaler interface.
 func (b *Bool) UnmarshalJSON(p []byte) error {
-	if bytes.Equal(p, []byte("null")) {
+	if bytes.Equal(p, jsonNull) {
 		b.Bool = false
 		b.Valid = false
 		return nil

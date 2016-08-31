@@ -1,6 +1,6 @@
 package nullable
 
-//go:generate nullable-generate
+//go:generate go run ./cmd/nullable-generate/main.go
 
 import "errors"
 

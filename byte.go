@@ -48,6 +48,17 @@ func (n Byte) Ptr() *byte {
 	return nil
 }
 
+// Normalized returns a Byte that can be compared with
+// another Byte for equality.
+func (n Byte) Normalized() Byte {
+	if n.Valid {
+		return n
+	}
+	// If !Valid, then Byte could be any value.
+	// Normalized value can be compared for equality.
+	return Byte{}
+}
+
 // Scan implements the sql.Scanner interface.
 func (n *Byte) Scan(value interface{}) error {
 	var nt sql.NullInt64

@@ -49,6 +49,17 @@ func (tm Time) Ptr() *time.Time {
 	return nil
 }
 
+// Normalized returns a Time that can be compared with
+// another Time for equality.
+func (tm Time) Normalized() Time {
+	if tm.Valid {
+		return tm
+	}
+	// If !Valid, then Time could be any value.
+	// Normalized value can be compared for equality.
+	return Time{}
+}
+
 // Value implements the driver.Valuer interface.
 func (tm Time) Value() (driver.Value, error) {
 	if !tm.Valid {

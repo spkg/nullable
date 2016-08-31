@@ -48,6 +48,17 @@ func (n Int8) Ptr() *int8 {
 	return nil
 }
 
+// Normalized returns an Int8 that can be compared with
+// another Int8 for equality.
+func (n Int8) Normalized() Int8 {
+	if n.Valid {
+		return n
+	}
+	// If !Valid, then Int8 could be any value.
+	// Normalized value can be compared for equality.
+	return Int8{}
+}
+
 // Scan implements the sql.Scanner interface.
 func (n *Int8) Scan(value interface{}) error {
 	var nt sql.NullInt64

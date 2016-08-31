@@ -182,5 +182,28 @@ func Test{{.Type}}(t *testing.T) {
 		// invalid JSON for any type
 		err = nt2.UnmarshalJSON([]byte("00 this is not valid xx"))
 		assert.Error(err)
+		
+		// test Normalized comparison
+		{
+			n1 := {{.Type}} {
+				{{.Type}}: {{.NonZeroVal}},
+			}
+			
+			n2 := {{.Type}} {
+				{{.Type}}: {{.ZeroVal}},
+			}
+			
+			n3 := {{.Type}} {
+				{{.Type}}: {{.NonZeroVal}},
+				Valid: true,
+			}
+			
+			if n1.Normalized() != n2.Normalized() {
+				t.Errorf("expected equal, got not equal: %v != %v", n1, n2)
+			}
+			if n3.Normalized() != n3.Normalized() {
+				t.Errorf("expected equal, got not equal: %v != %v", n3, n3)
+			}
+		}
 	}
 }

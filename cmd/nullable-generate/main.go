@@ -29,6 +29,18 @@ func main() {
 			_, err := os.Stat(filePath)
 			if err == nil {
 				for _, p := range params {
+					if p.ZeroVal == "" {
+						p.ZeroVal = "0"
+					}
+					if p.NonZeroVal == "" {
+						p.NonZeroVal = "1"
+					}
+					if p.Var == "" {
+						p.Var = "n"
+					}
+					if p.Indefinite == "" {
+						p.Indefinite = "a"
+					}
 					tmpl, err := template.ParseFiles(filePath)
 					if err != nil {
 						fmt.Println(err)
@@ -47,8 +59,8 @@ func main() {
 					}
 					outBytes, err := format.Source(outBuf.Bytes())
 					if err != nil {
-						fmt.Println(err)
-						os.Exit(1)
+						fmt.Println("format failed:", err)
+						outBytes = outBuf.Bytes()
 					}
 					if _, err = outFile.Write(outBytes); err != nil {
 						fmt.Println(err)
@@ -71,6 +83,7 @@ var params = []struct {
 	NullTypeField string
 	NullTypeVal   string
 	ZeroVal       string
+	NonZeroVal    string
 	Var           string
 	Imports       []string
 	NoScan        bool
@@ -84,7 +97,8 @@ var params = []struct {
 		NullType:      "NullString",
 		NullTypeField: "String",
 		NullTypeVal:   "string",
-		ZeroVal:       "\"\"",
+		ZeroVal:       `""`,
+		NonZeroVal:    `"non-zero"`,
 		Var:           "s",
 		NoCast:        true,
 	},
@@ -96,6 +110,7 @@ var params = []struct {
 		NullTypeField: "Bool",
 		NullTypeVal:   "bool",
 		ZeroVal:       "false",
+		NonZeroVal:    "true",
 		Var:           "b",
 		NoCast:        true,
 	},
@@ -107,6 +122,7 @@ var params = []struct {
 		NullTypeField: "-",
 		NullTypeVal:   "",
 		ZeroVal:       "time.Time{}",
+		NonZeroVal:    "time.Now()",
 		Var:           "tm",
 		NoScan:        true,
 		NoCast:        true,
@@ -119,8 +135,6 @@ var params = []struct {
 		NullType:      "NullFloat64",
 		NullTypeField: "Float64",
 		NullTypeVal:   "float64",
-		ZeroVal:       "0",
-		Var:           "n",
 		NoCast:        true,
 	},
 	{
@@ -130,8 +144,6 @@ var params = []struct {
 		NullType:      "NullFloat64",
 		NullTypeField: "Float64",
 		NullTypeVal:   "float64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Int",
@@ -140,8 +152,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Uint",
@@ -150,8 +160,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Int64",
@@ -160,8 +168,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 		NoCast:        true,
 	},
 	{
@@ -171,8 +177,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Int32",
@@ -181,8 +185,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Uint32",
@@ -191,8 +193,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Int16",
@@ -201,8 +201,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Uint16",
@@ -211,8 +209,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Int8",
@@ -221,8 +217,6 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 	{
 		Type:          "Byte",
@@ -231,7 +225,5 @@ var params = []struct {
 		NullType:      "NullInt64",
 		NullTypeField: "Int64",
 		NullTypeVal:   "int64",
-		ZeroVal:       "0",
-		Var:           "n",
 	},
 }

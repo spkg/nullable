@@ -55,6 +55,17 @@ func ({{.Var}} {{.Type}}) Ptr() *{{.NativeType}} {
 	return nil
 }
 
+// Normalized returns {{.Indefinite}} {{.Type}} that can be compared with
+// another {{.Type}} for equality.
+func ({{.Var}} {{.Type}}) Normalized() {{.Type}} {
+	if {{.Var}}.Valid {
+		return {{.Var}}
+	}
+	// If !Valid, then {{.Type}} could be any value.
+	// Normalized value can be compared for equality.
+	return {{.Type}}{}
+}
+
 {{if not .NoScan -}}
 // Scan implements the sql.Scanner interface.
 func ({{.Var}} *{{.Type}}) Scan(value interface{}) error {

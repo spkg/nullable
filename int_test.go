@@ -93,5 +93,28 @@ func TestInt(t *testing.T) {
 		// invalid JSON for any type
 		err = nt2.UnmarshalJSON([]byte("00 this is not valid xx"))
 		assert.Error(err)
+
+		// test Normalized comparison
+		{
+			n1 := Int{
+				Int: 1,
+			}
+
+			n2 := Int{
+				Int: 0,
+			}
+
+			n3 := Int{
+				Int:   1,
+				Valid: true,
+			}
+
+			if n1.Normalized() != n2.Normalized() {
+				t.Errorf("expected equal, got not equal: %v != %v", n1, n2)
+			}
+			if n3.Normalized() != n3.Normalized() {
+				t.Errorf("expected equal, got not equal: %v != %v", n3, n3)
+			}
+		}
 	}
 }

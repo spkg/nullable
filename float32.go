@@ -48,6 +48,17 @@ func (n Float32) Ptr() *float32 {
 	return nil
 }
 
+// Normalized returns a Float32 that can be compared with
+// another Float32 for equality.
+func (n Float32) Normalized() Float32 {
+	if n.Valid {
+		return n
+	}
+	// If !Valid, then Float32 could be any value.
+	// Normalized value can be compared for equality.
+	return Float32{}
+}
+
 // Scan implements the sql.Scanner interface.
 func (n *Float32) Scan(value interface{}) error {
 	var nt sql.NullFloat64

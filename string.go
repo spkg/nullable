@@ -48,6 +48,17 @@ func (s String) Ptr() *string {
 	return nil
 }
 
+// Normalized returns a String that can be compared with
+// another String for equality.
+func (s String) Normalized() String {
+	if s.Valid {
+		return s
+	}
+	// If !Valid, then String could be any value.
+	// Normalized value can be compared for equality.
+	return String{}
+}
+
 // Scan implements the sql.Scanner interface.
 func (s *String) Scan(value interface{}) error {
 	var nt sql.NullString

@@ -48,6 +48,17 @@ func (b Bool) Ptr() *bool {
 	return nil
 }
 
+// Normalized returns a Bool that can be compared with
+// another Bool for equality.
+func (b Bool) Normalized() Bool {
+	if b.Valid {
+		return b
+	}
+	// If !Valid, then Bool could be any value.
+	// Normalized value can be compared for equality.
+	return Bool{}
+}
+
 // Scan implements the sql.Scanner interface.
 func (b *Bool) Scan(value interface{}) error {
 	var nt sql.NullBool

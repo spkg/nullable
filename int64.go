@@ -48,6 +48,17 @@ func (n Int64) Ptr() *int64 {
 	return nil
 }
 
+// Normalized returns an Int64 that can be compared with
+// another Int64 for equality.
+func (n Int64) Normalized() Int64 {
+	if n.Valid {
+		return n
+	}
+	// If !Valid, then Int64 could be any value.
+	// Normalized value can be compared for equality.
+	return Int64{}
+}
+
 // Scan implements the sql.Scanner interface.
 func (n *Int64) Scan(value interface{}) error {
 	var nt sql.NullInt64

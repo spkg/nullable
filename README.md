@@ -5,7 +5,7 @@
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/txfjx8i49ntan6fm?svg=true)](https://ci.appveyor.com/project/jjeffery/nullable)
 [![license](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/spkg/nullable/master/LICENSE.md)
 [![Coverage Status](https://coveralls.io/repos/github/spkg/nullable/badge.svg?branch=master)](https://coveralls.io/github/spkg/nullable?branch=master)
-[![GoReportCard](http://goreportcard.com/badge/spkg/nullable)](http://goreportcard.com/report/spkg/nullable)
+[![GoReportCard](https://goreportcard.com/badge/github.com/spkg/nullable)](https://goreportcard.com/report/github.com/spkg/nullable)
 
 The `nullable` package provides a number of types that represent values
 that may be null. The standard Go library already includes types in the
